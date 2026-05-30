@@ -8,6 +8,10 @@ import rateLimit from 'express-rate-limit';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+// Import Swagger
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './utils/swagger.js';
+
 // Import middleware
 import { errorHandler } from './middleware/errorHandler.js';
 import { httpLogger } from './middleware/logger.js';
@@ -96,6 +100,43 @@ if (process.env.NODE_ENV === 'development') {
 // Custom Winston logger for HTTP requests
 app.use(httpLogger);
 
+/**
+ * @swagger
+ * /health:
+ *   get:
+ *     summary: Health check
+ *     description: Check if the API is running and healthy
+ *     tags: [Health]
+ *     responses:
+ *       200:
+ *         description: API is healthy
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: healthy
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                 uptime:
+ *                   type: number
+ *                   example: 123.45
+ *                 environment:
+ *                   type: string
+ *                   example: development
+ */
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV
+  });
+});
+
 // ============== HEALTH CHECK ==============
 
 // Simple health check endpoint
@@ -119,6 +160,27 @@ app.get('/', (req, res) => {
       health: '/health'
     }
   });
+});
+
+// ============== SWAGGER DOCUMENTATION ==============
+
+// Serve Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  explorer: true,
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'User CRUD API Documentation',
+  swaggerOptions: {
+    persistAuthorization: true,
+    displayRequestDuration: true,
+    filter: true,
+    tryItOutEnabled: true,
+  }
+}));
+
+// Serve Swagger JSON specification
+app.get('/api-docs.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
 });
 
 // ============== API ROUTES ==============
