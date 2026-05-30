@@ -91,6 +91,7 @@ export const userQuerySchema = z.object({
 // ==================== VALIDATION MIDDLEWARE ====================
 
 // Generic validation middleware factory
+// Generic validation middleware factory
 export const validate = (schema, source = 'body') => {
   return (req, res, next) => {
     try {
@@ -112,13 +113,13 @@ export const validate = (schema, source = 'body') => {
       // Validate and parse the data
       const validatedData = schema.parse(dataToValidate);
       
-      // Attach validated data back to request
+      // Store validated data in custom properties (DON'T overwrite req.query/req.params)
       if (source === 'params') {
-        req.params = validatedData;
+        req.validatedParams = validatedData;  // Changed from req.params
       } else if (source === 'query') {
-        req.query = validatedData;
+        req.validatedQuery = validatedData;   // Changed from req.query
       } else {
-        req.body = validatedData;
+        req.validatedBody = validatedData;     // Changed from req.body
       }
       
       next();
