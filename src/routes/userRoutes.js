@@ -1,67 +1,85 @@
 import express from 'express';
+import { 
+  validateCreateUser, 
+  validateUpdateUser, 
+  validateUserId,
+  validateUserQuery 
+} from '../middleware/validation.js';
 import { logger } from '../middleware/logger.js';
 
 const router = express.Router();
 
-// Temporary placeholder routes until we implement controllers
-// These will be replaced in Step 5 & 6
-
 /**
  * @route   GET /api/users
- * @desc    Get all users (Temporary)
+ * @desc    Get all users with pagination
  */
-router.get('/', (req, res) => {
+router.get('/', validateUserQuery, (req, res) => {
+  // Validated query parameters are available in req.query
+  const { page, limit, search } = req.query;
+  
   res.json({
     message: 'GET /api/users - Controller coming soon',
+    pagination: { page, limit, search },
     timestamp: new Date().toISOString()
   });
 });
 
 /**
  * @route   GET /api/users/:id
- * @desc    Get user by ID (Temporary)
+ * @desc    Get user by ID
  */
-router.get('/:id', (req, res) => {
+router.get('/:id', validateUserId, (req, res) => {
+  // Validated ID is available in req.params
+  const { id } = req.params;
+  
   res.json({
-    message: `GET /api/users/${req.params.id} - Controller coming soon`,
-    id: req.params.id,
+    message: `GET /api/users/${id} - Controller coming soon`,
+    id: id,
     timestamp: new Date().toISOString()
   });
 });
 
 /**
  * @route   POST /api/users
- * @desc    Create new user (Temporary)
+ * @desc    Create new user
  */
-router.post('/', (req, res) => {
+router.post('/', validateCreateUser, (req, res) => {
+  // Validated and sanitized data is available in req.body
+  const userData = req.body;
+  
   res.json({
     message: 'POST /api/users - Controller coming soon',
-    body: req.body,
+    validatedData: userData,
     timestamp: new Date().toISOString()
   });
 });
 
 /**
  * @route   PUT /api/users/:id
- * @desc    Update user (Temporary)
+ * @desc    Update user
  */
-router.put('/:id', (req, res) => {
+router.put('/:id', validateUserId, validateUpdateUser, (req, res) => {
+  const { id } = req.params;
+  const updateData = req.body;
+  
   res.json({
-    message: `PUT /api/users/${req.params.id} - Controller coming soon`,
-    id: req.params.id,
-    body: req.body,
+    message: `PUT /api/users/${id} - Controller coming soon`,
+    id: id,
+    validatedData: updateData,
     timestamp: new Date().toISOString()
   });
 });
 
 /**
  * @route   DELETE /api/users/:id
- * @desc    Delete user (Temporary)
+ * @desc    Delete user
  */
-router.delete('/:id', (req, res) => {
+router.delete('/:id', validateUserId, (req, res) => {
+  const { id } = req.params;
+  
   res.json({
-    message: `DELETE /api/users/${req.params.id} - Controller coming soon`,
-    id: req.params.id,
+    message: `DELETE /api/users/${id} - Controller coming soon`,
+    id: id,
     timestamp: new Date().toISOString()
   });
 });
