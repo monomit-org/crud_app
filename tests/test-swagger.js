@@ -1,4 +1,4 @@
-import { swaggerSpec } from './src/utils/swagger.js';
+import { swaggerSpec } from '../src/utils/swagger.js';
 
 console.log('📚 Swagger Documentation Generator\n');
 

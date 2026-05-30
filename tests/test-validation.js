@@ -4,7 +4,7 @@ import {
   userIdSchema,
   isValidEmail,
   isValidAge 
-} from './src/middleware/validation.js';
+} from '../src/middleware/validation.js';
 
 console.log('🧪 Testing Zod Validation Schemas\n');
 

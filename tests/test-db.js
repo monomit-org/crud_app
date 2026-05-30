@@ -1,4 +1,4 @@
-import prisma from './src/utils/prisma.js'
+import prisma from '../src/utils/prisma.js'
 
 async function testConnection() {
   try {
